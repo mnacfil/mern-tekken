@@ -10,7 +10,8 @@ app.use(express.json());
 
 app.get("/", (req, res) => {
   console.log("test endpoint!!!");
-  res.json({ message: "Welcome to Gevme Tekken Game!" });
+  res.send("Hello World");
+  // res.json({ message: "Welcome to Gevme Tekken Game!" });
 });
 
 app.use("/api/v1/tekken", tekkenRouter);

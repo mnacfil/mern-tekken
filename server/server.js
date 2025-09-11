@@ -1,7 +1,12 @@
 import express from "express";
 import cors from "cors";
-import tekkenRouter from "./routes/tekken.js";
 import { DEFAULT_PORT } from "./util/config.js";
+import {
+  authRoutes,
+  gamesRoutes,
+  monstersRoutes,
+  playersRoutes,
+} from "./routes/index.js";
 
 const app = express();
 
@@ -10,18 +15,20 @@ app.use(express.json());
 
 app.get("/", (req, res) => {
   console.log("test endpoint!!!");
-  res.send("Hello World");
-  // res.json({ message: "Welcome to Gevme Tekken Game!" });
+  res.json({ message: "Welcome to Gevme Tekken Game!" });
 });
 
-app.use("/api/v1/tekken", tekkenRouter);
+app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/games", gamesRoutes);
+app.use("/api/v1/monsters", monstersRoutes);
+app.use("/api/v1/players", playersRoutes);
 
-app.use("*", (req, res) => {
+app.use((req, res) => {
   console.log("404 - Route not found:", req.originalUrl);
   res.status(404).json({ error: "Route not found" });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || DEFAULT_PORT;
 
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);

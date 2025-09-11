@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+
 import { DEFAULT_PORT } from "./util/config.js";
 import {
   authRoutes,
@@ -7,6 +8,7 @@ import {
   monstersRoutes,
   playersRoutes,
 } from "./routes/index.js";
+import { connectAndStartServer } from "./db/connection.js";
 
 const app = express();
 
@@ -30,6 +32,8 @@ app.use((req, res) => {
 
 const PORT = process.env.PORT || DEFAULT_PORT;
 
-app.listen(PORT, () => {
-  console.log(`Server is listening on port ${PORT}`);
+connectAndStartServer(() => {
+  app.listen(PORT, () => {
+    console.log(`Server is listening on port ${PORT}`);
+  });
 });

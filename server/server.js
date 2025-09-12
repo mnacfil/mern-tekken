@@ -9,6 +9,7 @@ import {
   playersRoutes,
 } from "./routes/index.js";
 import { connectAndStartServer } from "./db/connection.js";
+import { globalErrorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
 
@@ -29,6 +30,8 @@ app.use((req, res) => {
   console.log("404 - Route not found:", req.originalUrl);
   res.status(404).json({ error: "Route not found" });
 });
+
+app.use(globalErrorHandler);
 
 const PORT = process.env.PORT || DEFAULT_PORT;
 

@@ -24,6 +24,18 @@ class PlayerController {
       next(error);
     }
   }
+
+  async getPlayerById(req, res, next) {
+    try {
+      const player = await PlayerService.getPlayerById(req.params.id);
+      res.status(200).json({
+        status: "success",
+        data: { player },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new PlayerController();

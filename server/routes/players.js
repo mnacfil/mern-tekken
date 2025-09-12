@@ -1,9 +1,9 @@
 import express from "express";
+import PlayerController from "../controllers/player.js";
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  res.json({ message: "Players routes" });
-});
+router.post("/", PlayerController.createPlayer);
+router.get("/", PlayerController.getPlayers);
 
 export default router;

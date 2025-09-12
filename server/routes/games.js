@@ -1,9 +1,12 @@
+import GameController from "../controllers/game.js";
 import express from "express";
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  res.json({ message: "Games routes" });
-});
+router.get("/", GameController.getGames);
+router.get("/:id/history", GameController.getPlayerGamesHistory);
+router.post("/start", GameController.startNewGame);
+router.post("/:id/monster-attack", GameController.monsterAttack);
+router.post("/:id/player-attack", GameController.playerAttack);
 
 export default router;

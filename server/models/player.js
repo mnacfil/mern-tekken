@@ -38,6 +38,12 @@ const playerSchema = new mongoose.Schema(
   }
 );
 
+playerSchema.virtual("Game", {
+  ref: "Game",
+  localField: "_id",
+  foreignField: "player",
+});
+
 playerSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   try {

@@ -32,7 +32,7 @@ type HomeContextValue = HomeState & {
   startTheGame: () => Promise<void>;
   playerAttackMonster: () => Promise<void>;
   monsterAttackPlayer: () => Promise<void>;
-  playAgain: () => void;
+  playAgain: () => Promise<void>;
   quitGame: () => void;
 };
 
@@ -73,6 +73,7 @@ type HomeActions =
     }
   | {
       type: typeof HOME_ACTIONS.PlAY_AGAIN;
+      payload: { monster: Monster; game: Game };
     }
   | {
       type: typeof HOME_ACTIONS.QUIT_GAME;
@@ -132,8 +133,10 @@ const homeReducer = (state: HomeState, action: HomeActions): HomeState => {
     case HOME_ACTIONS.PlAY_AGAIN:
       return {
         ...state,
-        ...initialState,
-        currentStep: "ready",
+        gameOver: false,
+        monster: action.payload.monster,
+        currentGame: action.payload.game,
+        currentStep: "start",
       };
     case HOME_ACTIONS.QUIT_GAME:
       return {
@@ -166,7 +169,6 @@ const HomeProvider = ({ children }: { children: ReactNode }) => {
       state.currentGame?.gameData?.monsterHealth === 0 ||
       state.currentGame?.gameData?.playerHealth === 0
     ) {
-      console.log("game is over");
       dispatch({ type: HOME_ACTIONS.GAME_OVER });
     }
   }, [state.currentGame?.gameData]);
@@ -182,7 +184,7 @@ const HomeProvider = ({ children }: { children: ReactNode }) => {
       if (!response) {
         throw new Error("No monster");
       }
-      console.log("monster -> ", response);
+
       dispatch({
         type: HOME_ACTIONS.START_PLAYING,
         payload: response.data.monster,
@@ -203,7 +205,6 @@ const HomeProvider = ({ children }: { children: ReactNode }) => {
       if (!response) {
         throw new Error("Failed to create a game!");
       }
-      console.log("game -> ", response);
       dispatch({ type: HOME_ACTIONS.START_GAME, payload: response.data.game });
     } catch (error) {
       console.log(error);
@@ -251,8 +252,29 @@ const HomeProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const playAgain = () => {
-    dispatch({ type: HOME_ACTIONS.PlAY_AGAIN });
+  const playAgain = async () => {
+    try {
+      const monsterResponse = await getMonster();
+      if (!monsterResponse) {
+        throw new Error("No monster");
+      }
+      const gameResponse = await startGame(
+        user?.id ?? "",
+        monsterResponse?.data?.monster?.id ?? ""
+      );
+      if (!gameResponse) {
+        throw new Error("Failed to create a game!");
+      }
+      dispatch({
+        type: HOME_ACTIONS.PlAY_AGAIN,
+        payload: {
+          monster: monsterResponse.data.monster,
+          game: gameResponse?.data?.game,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
   const quitGame = () => {
     dispatch({ type: HOME_ACTIONS.QUIT_GAME });

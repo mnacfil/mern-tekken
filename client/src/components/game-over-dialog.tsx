@@ -28,11 +28,13 @@ const GameOverDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange} {...props}>
       <DialogContent className="text-center w-[400px]">
         <DialogHeader className="flex justify-center  items-center">
-          <DialogTitle className="text-3xl font-bold">Game Over!</DialogTitle>
+          <DialogTitle className="text-3xl font-bold">
+            {winner === "player" ? "You Win!" : "Game Over!"}{" "}
+          </DialogTitle>
         </DialogHeader>
         <p className="text-lg text-muted-foreground">
           {winner === "player"
-            ? "You win congratulations"
+            ? "Congratulations! You defeated the monster!"
             : "The monster proved too powerful this time"}
         </p>
         <p className="text-xl font-medium">Play Again?</p>

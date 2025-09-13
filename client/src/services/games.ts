@@ -114,3 +114,20 @@ export const healEntity = async (
     return null;
   }
 };
+
+export const abandonedGame = async (
+  gameId: string
+): Promise<ApiResponse<{ game: Game }> | null> => {
+  try {
+    const response = await apiClient.post(
+      `${BASE_PATH.game}/${gameId}/abandoned`
+    );
+    if (response.status !== 200) {
+      return null;
+    }
+    return response.data;
+  } catch (error) {
+    console.log("Failed to abandone the game");
+    return null;
+  }
+};

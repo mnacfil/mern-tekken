@@ -8,6 +8,7 @@ import {
 import { useAuth } from "./auth-context";
 import { useNavigate } from "react-router";
 import {
+  abandonedGame,
   getMonster,
   healEntity,
   monsterAttack,
@@ -37,6 +38,7 @@ type HomeContextValue = HomeState & {
   playAgain: () => Promise<void>;
   quitGame: () => void;
   heal: (entity: "player" | "monster") => Promise<void>;
+  abandonedTheGame: () => Promise<void>;
 };
 
 const HOME_ACTIONS = {
@@ -50,6 +52,7 @@ const HOME_ACTIONS = {
   PlAY_AGAIN: "PLAY_AGAIN",
   QUIT_GAME: "QUIT_GAME",
   HEAL: "HEAL",
+  ABANDONED_GAME: "ABANDONED_GAME",
 } as const;
 
 type HomeActions =
@@ -84,6 +87,10 @@ type HomeActions =
     }
   | {
       type: typeof HOME_ACTIONS.HEAL;
+      payload: Game;
+    }
+  | {
+      type: typeof HOME_ACTIONS.ABANDONED_GAME;
       payload: Game;
     };
 
@@ -157,6 +164,12 @@ const homeReducer = (state: HomeState, action: HomeActions): HomeState => {
         ...state,
         currentGame: action.payload,
       };
+    case HOME_ACTIONS.ABANDONED_GAME:
+      return {
+        ...state,
+        currentGame: action.payload,
+        gameOver: true,
+      };
     default:
       return state;
   }
@@ -180,11 +193,13 @@ const HomeProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (
       state.currentGame?.gameData?.monsterHealth === 0 ||
-      state.currentGame?.gameData?.playerHealth === 0
+      state.currentGame?.gameData?.playerHealth === 0 ||
+      state.currentGame?.status === "completed" ||
+      state.currentGame?.status === "abandoned"
     ) {
       dispatch({ type: HOME_ACTIONS.GAME_OVER });
     }
-  }, [state.currentGame?.gameData]);
+  }, [state.currentGame?.gameData, state?.currentGame?.status]);
 
   const startPlaying = async () => {
     if (!isAuthenticated) {
@@ -290,6 +305,21 @@ const HomeProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const abandonedTheGame = async () => {
+    try {
+      const response = await abandonedGame(state.currentGame?.id ?? "");
+      if (!response) {
+        throw new Error("Failed to abandoned the game");
+      }
+      dispatch({
+        type: HOME_ACTIONS.ABANDONED_GAME,
+        payload: response.data.game,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const playAgain = async () => {
     try {
       const monsterResponse = await getMonster();
@@ -334,6 +364,7 @@ const HomeProvider = ({ children }: { children: ReactNode }) => {
     playAgain,
     quitGame,
     heal,
+    abandonedTheGame,
   };
 
   return (

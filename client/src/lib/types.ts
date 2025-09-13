@@ -10,7 +10,7 @@ export interface Game {
   _id: string;
   player: Player;
   monster: Monster;
-  status: "in-progress" | "completed" | "pending";
+  status: "in-progress" | "completed" | "pending" | "abandoned";
   winner: string | null;
   duration: number;
   moves: Move[];
@@ -26,7 +26,7 @@ export interface GameV2 {
   _id: string;
   player: Pick<Player, "id" | "fullName" | "_id">;
   monster: Pick<Monster, "id" | "_id" | "name">;
-  status: "in-progress" | "completed" | "pending";
+  status: "in-progress" | "completed" | "pending" | "abandoned";
   winner: string | null;
   duration: number;
   moves: Move[];

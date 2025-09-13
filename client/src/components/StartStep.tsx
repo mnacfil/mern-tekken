@@ -17,9 +17,11 @@ const StartStep = () => {
     gameOver,
     heal,
     playerAttackMonster,
+    abandonedTheGame,
   } = useHome();
   const { user } = useAuth();
   const { gameData, moves, player, status, winner } = currentGame ?? {};
+  console.log(status);
   return (
     <>
       <div className="w-full space-y-6 text-slate-900">
@@ -98,7 +100,10 @@ const StartStep = () => {
             >
               HEAL
             </Button>
-            <Button className="flex-1 text-lg rounded-lg py-6 bg-slate-700 hover:bg-slate-800 cursor-pointer">
+            <Button
+              onClick={abandonedTheGame}
+              className="flex-1 text-lg rounded-lg py-6 bg-slate-700 hover:bg-slate-800 cursor-pointer"
+            >
               GIVE UP
             </Button>
           </div>
@@ -138,9 +143,10 @@ const StartStep = () => {
       </div>
 
       <GameOverDialog
-        open={status === "completed"}
+        open={status === "completed" || status === "abandoned"}
         onOpenChange={setOpen}
         winner={winner ?? "player"}
+        isAbandoned={status === "abandoned"}
       />
     </>
   );

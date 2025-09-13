@@ -9,5 +9,6 @@ router.post("/start", GameController.startNewGame);
 router.post("/:id/monster-attack", GameController.monsterAttack);
 router.post("/:id/player-attack", GameController.playerAttack);
 router.post("/:id/heal", GameController.healEntity);
+router.post("/:id/abandoned", GameController.abandonedGame);
 
 export default router;

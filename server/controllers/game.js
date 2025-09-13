@@ -55,6 +55,18 @@ class GameController {
     }
   }
 
+  async abandonedGame(req, res, next) {
+    try {
+      const game = await GameService.abandonedGame(req.params.id);
+      res.status(200).json({
+        status: "success",
+        data: { game },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async getGames(req, res, next) {
     try {
       const games = await GameService.getGames();

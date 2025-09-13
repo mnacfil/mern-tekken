@@ -15,7 +15,7 @@ const gameSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["idle", "in-progress", "completed"],
+      enum: ["idle", "in-progress", "completed", "abandoned"],
       default: "idle",
     },
 
@@ -84,6 +84,13 @@ gameSchema.methods.endGame = async function (winner) {
   console.log("winner ->", winner);
   this.status = "completed";
   this.winner = winner;
+
+  return await this.save();
+};
+
+gameSchema.methods.abandonedGame = async function () {
+  this.status = "abandoned";
+  this.winner = null;
 
   return await this.save();
 };

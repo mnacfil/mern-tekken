@@ -1,6 +1,6 @@
 import { BASE_PATH } from "@/lib/config";
 import apiClient from "./api";
-import type { ApiResponse, Game, Monster } from "@/lib/types";
+import type { ApiResponse, Game, GameV2, Monster } from "@/lib/types";
 
 export const getBattleHistory = async (playerId: string) => {
   console.log(playerId);
@@ -48,6 +48,44 @@ export const startGame = async (
   try {
     const response = await apiClient.post(`${BASE_PATH.game}/start`, payload);
     if (response.status !== 201) {
+      return null;
+    }
+    return response.data;
+  } catch (error) {
+    console.log("Failed to fetch battle history");
+    return null;
+  }
+};
+
+export const playerAttack = async (
+  gameId: string,
+  damage: number
+): Promise<ApiResponse<{ game: Game }> | null> => {
+  try {
+    const response = await apiClient.post(
+      `${BASE_PATH.game}/${gameId}/player-attack`,
+      { damage }
+    );
+    if (response.status !== 200) {
+      return null;
+    }
+    return response.data;
+  } catch (error) {
+    console.log("Failed to fetch battle history");
+    return null;
+  }
+};
+
+export const monsterAttack = async (
+  gameId: string,
+  damage: number
+): Promise<ApiResponse<{ game: Game }> | null> => {
+  try {
+    const response = await apiClient.post(
+      `${BASE_PATH.game}/${gameId}/monster-attack`,
+      { damage }
+    );
+    if (response.status !== 200) {
       return null;
     }
     return response.data;

@@ -1,13 +1,28 @@
-import { createContext, useContext, useReducer, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+  type ReactNode,
+} from "react";
 import { useAuth } from "./auth-context";
 import { useNavigate } from "react-router";
-import { getMonster, startGame } from "@/services/games";
+import {
+  getMonster,
+  monsterAttack,
+  playerAttack,
+  startGame,
+} from "@/services/games";
 import type { Game, Monster } from "@/lib/types";
+import { getRandomDamge } from "@/lib/utils";
 
 type HomeState = {
   currentStep: "call-to-action" | "ready" | "start";
   currentGame: Game | null;
   monster: Monster | null;
+  isPlayerAttacking: boolean;
+  isMonsterAttacking: boolean;
+  gameOver: boolean;
 };
 
 type HomeContextValue = HomeState & {
@@ -15,6 +30,10 @@ type HomeContextValue = HomeState & {
   onLogout: () => void;
   startPlaying: () => Promise<void>;
   startTheGame: () => Promise<void>;
+  playerAttackMonster: () => Promise<void>;
+  monsterAttackPlayer: () => Promise<void>;
+  playAgain: () => void;
+  quitGame: () => void;
 };
 
 const HOME_ACTIONS = {
@@ -22,6 +41,11 @@ const HOME_ACTIONS = {
   LOGOUT: "LOGOUT",
   START_PLAYING: "START_PLAYING",
   START_GAME: "START_GAME",
+  PLAYER_ATTACK: "PLAYER_ATTACK",
+  MONSTER_ATTACK: "MONSTER_ATTACK",
+  GAME_OVER: "GAME_OVER",
+  PlAY_AGAIN: "PLAY_AGAIN",
+  QUIT_GAME: "QUIT_GAME",
 } as const;
 
 type HomeActions =
@@ -35,12 +59,32 @@ type HomeActions =
   | {
       type: typeof HOME_ACTIONS.START_GAME;
       payload: Game;
+    }
+  | {
+      type: typeof HOME_ACTIONS.PLAYER_ATTACK;
+      payload: Game;
+    }
+  | {
+      type: typeof HOME_ACTIONS.MONSTER_ATTACK;
+      payload: Game;
+    }
+  | {
+      type: typeof HOME_ACTIONS.GAME_OVER;
+    }
+  | {
+      type: typeof HOME_ACTIONS.PlAY_AGAIN;
+    }
+  | {
+      type: typeof HOME_ACTIONS.QUIT_GAME;
     };
 
 const initialState: HomeState = {
   currentStep: "call-to-action",
   currentGame: null,
   monster: null,
+  isPlayerAttacking: false,
+  isMonsterAttacking: false,
+  gameOver: false,
 };
 
 const homeReducer = (state: HomeState, action: HomeActions): HomeState => {
@@ -67,6 +111,36 @@ const homeReducer = (state: HomeState, action: HomeActions): HomeState => {
         currentGame: action.payload,
         currentStep: "start",
       };
+    case HOME_ACTIONS.PLAYER_ATTACK:
+      return {
+        ...state,
+        isPlayerAttacking: true,
+        currentGame: action.payload,
+      };
+    case HOME_ACTIONS.MONSTER_ATTACK:
+      return {
+        ...state,
+        isMonsterAttacking: true,
+        isPlayerAttacking: false,
+        currentGame: action.payload,
+      };
+    case HOME_ACTIONS.GAME_OVER:
+      return {
+        ...state,
+        gameOver: true,
+      };
+    case HOME_ACTIONS.PlAY_AGAIN:
+      return {
+        ...state,
+        ...initialState,
+        currentStep: "ready",
+      };
+    case HOME_ACTIONS.QUIT_GAME:
+      return {
+        ...state,
+        ...initialState,
+        currentStep: "call-to-action",
+      };
     default:
       return state;
   }
@@ -86,6 +160,16 @@ const HomeProvider = ({ children }: { children: ReactNode }) => {
       dispatch({ type: HOME_ACTIONS.NEXT_STEP, payload: step });
     }
   };
+
+  useEffect(() => {
+    if (
+      state.currentGame?.gameData?.monsterHealth === 0 ||
+      state.currentGame?.gameData?.playerHealth === 0
+    ) {
+      console.log("game is over");
+      dispatch({ type: HOME_ACTIONS.GAME_OVER });
+    }
+  }, [state.currentGame?.gameData]);
 
   const startPlaying = async () => {
     if (!isAuthenticated) {
@@ -126,6 +210,54 @@ const HomeProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const playerAttackMonster = async () => {
+    const randomDamge = getRandomDamge();
+    try {
+      const response = await playerAttack(
+        state.currentGame?.id ?? "",
+        randomDamge
+      );
+      if (!response) {
+        throw new Error("Failed to attack monster");
+      }
+
+      dispatch({
+        type: HOME_ACTIONS.PLAYER_ATTACK,
+        payload: response.data.game,
+      });
+
+      await monsterAttackPlayer();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const monsterAttackPlayer = async () => {
+    const randomDamge = getRandomDamge();
+    try {
+      const response = await monsterAttack(
+        state.currentGame?.id ?? "",
+        randomDamge
+      );
+      if (!response) {
+        throw new Error("Failed to attack player");
+      }
+      dispatch({
+        type: HOME_ACTIONS.MONSTER_ATTACK,
+        payload: response.data.game,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const playAgain = () => {
+    dispatch({ type: HOME_ACTIONS.PlAY_AGAIN });
+  };
+  const quitGame = () => {
+    dispatch({ type: HOME_ACTIONS.QUIT_GAME });
+  };
+
   // Todo: Callback to reset the states after logout
   const onLogout = () => {
     dispatch({ type: HOME_ACTIONS.LOGOUT });
@@ -137,6 +269,10 @@ const HomeProvider = ({ children }: { children: ReactNode }) => {
     onLogout,
     startPlaying,
     startTheGame,
+    playerAttackMonster,
+    monsterAttackPlayer,
+    playAgain,
+    quitGame,
   };
 
   return (

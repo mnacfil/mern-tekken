@@ -21,7 +21,6 @@ const gameSchema = new mongoose.Schema(
 
     winner: {
       type: String,
-      enum: ["player", "monster", "draw", null],
       default: null,
     },
 
@@ -82,8 +81,9 @@ gameSchema.methods.startGame = async function () {
 };
 
 gameSchema.methods.endGame = async function (winner) {
+  console.log("winner ->", winner);
   this.status = "completed";
-  this.result.winner = winner;
+  this.winner = winner;
 
   return await this.save();
 };

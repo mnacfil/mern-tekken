@@ -5,11 +5,20 @@ import { useState } from "react";
 import GameOverDialog from "./game-over-dialog";
 import { useHome } from "@/context/home-context";
 import { useAuth } from "@/context/auth-context";
+import { Progress } from "./ui/progress";
+import { cn } from "@/lib/utils";
 
 const StartStep = () => {
   const [open, setOpen] = useState(false);
-  const { monster, currentGame } = useHome();
+  const {
+    monster,
+    currentGame,
+    isPlayerAttacking,
+    gameOver,
+    playerAttackMonster,
+  } = useHome();
   const { user } = useAuth();
+  const { gameData, moves, player, status, winner } = currentGame ?? {};
   return (
     <>
       <div className="w-full space-y-6 text-slate-900">
@@ -26,9 +35,13 @@ const StartStep = () => {
                 {user?.fullName ?? "Player Name"}
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="rounded-full bg-green-500 h-8 w-full flex items-center justify-center gap-1 font-medium text-white">
-                <span className="text-lg">100</span>
+            <CardContent className="space-y-4">
+              <Progress
+                value={gameData?.playerHealth ?? 100}
+                className="h-10 bg-green-500"
+              />
+              <div className="flex items-center justify-center gap-1">
+                <span className="text-lg">{gameData?.playerHealth ?? 100}</span>
                 <Percent className="size-4" />
               </div>
             </CardContent>
@@ -43,8 +56,14 @@ const StartStep = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="rounded-full bg-red-500 h-8 w-full flex items-center justify-center gap-1 font-medium text-white">
-                <span className="text-lg">100</span>
+              <Progress
+                value={gameData?.monsterHealth ?? 100}
+                className="h-10 bg-red-500"
+              />
+              <div className="flex items-center justify-center gap-1">
+                <span className="text-lg">
+                  {gameData?.monsterHealth ?? 100}
+                </span>
                 <Percent className="size-4" />
               </div>
             </CardContent>
@@ -53,7 +72,14 @@ const StartStep = () => {
         <div className="text-center space-y-4">
           <h3 className="text-xl font-medium">Action Buttons</h3>
           <div className="flex gap-4 justify-between items-center max-w-2xl  mx-auto">
-            <Button className="flex-1 text-lg rounded-lg py-6 bg-green-700 hover:bg-green-800 cursor-pointer">
+            <Button
+              onClick={playerAttackMonster}
+              disabled={isPlayerAttacking}
+              className={cn(
+                "flex-1 text-lg rounded-lg py-6 bg-green-700 hover:bg-green-800 cursor-pointer",
+                isPlayerAttacking && "cursor-not-allowed"
+              )}
+            >
               ATTACK
             </Button>
             <Button className="flex-1 text-lg rounded-lg py-6 bg-orange-500 hover:bg-orange-600 cursor-pointer">
@@ -67,21 +93,45 @@ const StartStep = () => {
             </Button>
           </div>
         </div>
-        <Card className="border-slate-50">
+        <Card className="border-slate-50 ">
           <CardHeader>
             <CardTitle>Commentary</CardTitle>
           </CardHeader>
-          <CardContent className="text-sm">
+          <CardContent className="text-sm max-h-72 overflow-y-auto">
             <div className="bg-slate-50 border  p-6 border-slate-200 rounded-xl">
-              <div className="bg-white p-1.5 rounded-md border-l-4 border-green-500">
-                Hello World
-              </div>
+              {moves?.map((move) => (
+                <div
+                  key={move._id}
+                  className="bg-white text-slate-900 p-1.5 rounded-md border-l-4 border-green-500"
+                >
+                  <span className="text-green-500">
+                    {move.entity === "player"
+                      ? player?.fullName ?? "Player"
+                      : monster?.name ?? "Monster"}
+                  </span>{" "}
+                  <span className="text-muted-foreground capitalize">
+                    {move.action}
+                  </span>{" "}
+                  <span className="text-red-500">
+                    {move.entity === "player"
+                      ? monster?.name ?? "Monster"
+                      : player?.fullName ?? "Player"}{" "}
+                  </span>
+                  <span className="">
+                    by <span className="text-green-500">{move.damage}</span>
+                  </span>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <GameOverDialog open={open} onOpenChange={setOpen} winner="monster" />
+      <GameOverDialog
+        open={status === "completed"}
+        onOpenChange={setOpen}
+        winner={winner ?? "player"}
+      />
     </>
   );
 };

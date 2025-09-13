@@ -7,11 +7,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "./ui/dialog";
+import { useHome } from "@/context/home-context";
 
 type GameOverDialogProps = {
   open?: boolean;
   modal?: boolean;
-  winner?: "player" | "monster";
+  winner?: string;
   onOpenChange?(open: boolean): void;
 };
 
@@ -21,6 +22,8 @@ const GameOverDialog = ({
   onOpenChange,
   ...props
 }: GameOverDialogProps) => {
+  const { playAgain, quitGame } = useHome();
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange} {...props}>
       <DialogContent className="text-center w-[400px]">
@@ -36,11 +39,16 @@ const GameOverDialog = ({
         <DialogFooter className="flex gap-4">
           <Button
             variant={"secondary"}
+            onClick={quitGame}
             className="flex-1 py-6 rounded-xl text-xl cursor-pointer"
           >
             No
           </Button>
-          <Button className="flex-1 py-6 rounded-xl text-xl cursor-pointer">
+
+          <Button
+            onClick={playAgain}
+            className="flex-1 py-6 rounded-xl text-xl cursor-pointer"
+          >
             Yes
           </Button>
         </DialogFooter>

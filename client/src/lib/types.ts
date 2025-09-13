@@ -21,6 +21,22 @@ export interface Game {
   id: string;
 }
 
+export interface GameV2 {
+  gameData: GameData;
+  _id: string;
+  player: Pick<Player, "id" | "fullName" | "_id">;
+  monster: Pick<Monster, "id" | "_id" | "name">;
+  status: "in-progress" | "completed" | "pending";
+  winner: string | null;
+  duration: number;
+  moves: Move[];
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  durationInMinutes: number;
+  id: string;
+}
+
 export interface GameData {
   playerHealth: number;
   monsterHealth: number;
@@ -29,27 +45,29 @@ export interface GameData {
 export interface Player {
   _id: string;
   fullName: string;
-  email: string;
-  avatar: string | null;
+  email?: string;
+  avatar?: string | null;
   id: string;
 }
 
 export interface Monster {
   _id: string;
   name: string;
-  avatar: string | null;
+  avatar?: string | null;
   id: string;
-  health: number;
-  attack: number;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
+  health?: number;
+  attack?: number;
+  createdAt?: string;
+  updatedAt?: string;
+  __v?: number;
 }
 
 export interface Move {
   entity: "player" | "monster";
   action: string;
   damage?: number;
+  _id?: string;
+  id?: string;
 }
 
 export type RegisterPayload = {

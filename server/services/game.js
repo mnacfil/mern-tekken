@@ -5,7 +5,6 @@ import { APIError } from "../middleware/errorHandler.js";
 
 class GameService {
   async startNewGame(payload) {
-    console.log(payload);
     const { playerId, monsterId, duration = 60 } = payload ?? {};
     if (!playerId || !monsterId) {
       throw new APIError("Bad Request, Player or Monster is missing.", 400);
@@ -31,6 +30,10 @@ class GameService {
         player: playerId,
         monster: monsterId,
         duration,
+        gameData: {
+          monsterHealth: 30,
+          playerHealth: 30,
+        },
       });
 
       await game.startGame();
@@ -57,11 +60,16 @@ class GameService {
 
     try {
       const game = await Game.findById(gameId)
-        .populate("player", "name")
+        .populate("player", "fullName")
         .populate("monster", "name");
       if (!game) {
         throw new APIError("Game not found!", 404);
       }
+
+      if (game.status === "completed") {
+        throw new APIError("Game is already ended!", 404);
+      }
+
       const playerName = game.player.name;
       const monsterName = game.monster.name;
 
@@ -71,6 +79,7 @@ class GameService {
         `${playerName} attacked! ${monsterName} monster health:`,
         game.gameData.monsterHealth
       );
+
       if (game.gameData.monsterHealth <= 0) {
         await game.endGame("player");
         console.log("Player win");
@@ -94,6 +103,11 @@ class GameService {
       if (!game) {
         throw new APIError("Game not found!", 404);
       }
+
+      if (game.status === "completed") {
+        throw new APIError("Game is already ended!", 404);
+      }
+
       const playerName = game.player.fullName;
       const monsterName = game.monster.name;
 

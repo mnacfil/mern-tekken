@@ -5,6 +5,7 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import HomePage from "./pages/home/Home";
 import { HomeProvider } from "./context/home-context";
+import { AuthProvider } from "./context/auth-context";
 
 function App() {
   return (
@@ -14,9 +15,11 @@ function App() {
           <Route
             index
             element={
-              <HomeProvider>
-                <HomePage />
-              </HomeProvider>
+              <AuthProvider>
+                <HomeProvider>
+                  <HomePage />
+                </HomeProvider>
+              </AuthProvider>
             }
           />
           <Route element={<AuthLayout />}>

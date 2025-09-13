@@ -130,6 +130,7 @@ const getCurrentUser = async (req, res, next) => {
   if (!req.query.id) {
     throw new APIError("Bad Request, No player id provided", 400);
   }
+  console.log(req.query.id);
   try {
     const player = await Player.findById(req.query.id).select("-password");
 

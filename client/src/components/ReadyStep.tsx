@@ -5,6 +5,7 @@ import { Button } from "./ui/button";
 
 const ReadyStep = () => {
   const { next } = useHome();
+
   return (
     <div className="w-full space-y-6">
       <div className="grid gap-6 grid-cols-2 text-center">

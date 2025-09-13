@@ -5,7 +5,7 @@ import { Card, CardContent } from "./ui/card";
 import { Separator } from "./ui/separator";
 import AppLogo from "./app-logo";
 
-const AuthCTA = () => {
+const AuthCTAStep = () => {
   return (
     <Card className="border-slate-100  w-[500px] rounded-2xl">
       <CardContent className="text-center flex flex-col items-center">
@@ -45,4 +45,4 @@ const AuthCTA = () => {
   );
 };
 
-export default AuthCTA;
+export default AuthCTAStep;

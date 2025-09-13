@@ -1,12 +1,16 @@
-import AuthCTA from "@/components/AuthCTA";
-
-const isAuth = false;
+import AuthCTAStep from "@/components/AuthCTAStep";
+import ReadyStep from "@/components/ReadyStep";
+import StartStep from "@/components/StartStep";
+import { useHome } from "@/context/home-context";
 
 const HomePage = () => {
-  if (isAuth) return <div>welcome to this game</div>;
+  const { currentStep, isSignedIn } = useHome();
+
   return (
     <div className="h-full flex justify-center items-center pb-52">
-      <AuthCTA />
+      {isSignedIn && currentStep === "ready" && <ReadyStep />}
+      {isSignedIn && currentStep === "start" && <StartStep />}
+      {!isSignedIn && <AuthCTAStep />}
     </div>
   );
 };

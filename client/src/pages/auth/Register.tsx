@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-const Register = () => {
+const RegisterPage = () => {
   return (
     <Card className="rounded-2xl border-primary-foreground p-0">
       <CardHeader className="bg-primary text-primary-foreground rounded-t-2xl p-5 text-center relative">
@@ -29,4 +29,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default RegisterPage;

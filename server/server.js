@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-
+import cookieParser from "cookie-parser";
 import { DEFAULT_PORT } from "./util/config.js";
 import {
   authRoutes,
@@ -13,18 +13,24 @@ import { globalErrorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use(express.json());
-
-app.get("/", (req, res) => {
-  console.log("test endpoint!!!");
-  res.json({ message: "Welcome to Gevme Tekken Game!" });
-});
+app.use(cookieParser());
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/games", gamesRoutes);
 app.use("/api/v1/monsters", monstersRoutes);
 app.use("/api/v1/players", playersRoutes);
+
+app.get("/", (req, res) => {
+  console.log("test endpoint!!!");
+  res.json({ message: "Welcome to Gevme Tekken Game!" });
+});
 
 app.use((req, res) => {
   console.log("404 - Route not found:", req.originalUrl);

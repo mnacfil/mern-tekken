@@ -88,7 +88,7 @@ gameSchema.methods.endGame = async function (winner) {
   return await this.save();
 };
 
-gameSchema.methods.addMove = async function (entity, action, damage = 0) {
+gameSchema.methods.addMove = async function (entity, action, damage = 1) {
   const move = {
     entity,
     action,
@@ -97,17 +97,39 @@ gameSchema.methods.addMove = async function (entity, action, damage = 0) {
 
   this.moves.push(move);
 
-  if (damage > 0) {
-    if (entity === "player") {
-      this.gameData.monsterHealth = Math.max(
-        0,
-        this.gameData.monsterHealth - damage
-      );
-    } else {
-      this.gameData.playerHealth = Math.max(
-        0,
-        this.gameData.playerHealth - damage
-      );
+  if (entity === "player") {
+    this.gameData.monsterHealth = Math.max(
+      0,
+      this.gameData.monsterHealth - damage
+    );
+  } else {
+    this.gameData.playerHealth = Math.max(
+      0,
+      this.gameData.playerHealth - damage
+    );
+  }
+
+  return await this.save();
+};
+
+gameSchema.methods.heal = async function (entity, heal = 1) {
+  const move = {
+    entity,
+    damage: heal,
+    action: "Heal",
+  };
+
+  this.moves.push(move);
+
+  if (entity === "player") {
+    this.gameData.playerHealth = this.gameData?.playerHealth + heal;
+    if (this.gameData.playerHealth > 100) {
+      this.gameData.playerHealth = 100;
+    }
+  } else {
+    this.gameData.monsterHealth = this.gameData?.monsterHealth + heal;
+    if (this.gameData.monsterHealth > 100) {
+      this.gameData.monsterHealth = 100;
     }
   }
 
@@ -115,6 +137,3 @@ gameSchema.methods.addMove = async function (entity, action, damage = 0) {
 };
 
 export default mongoose.model("Game", gameSchema);
-
-// 68c3b5560d60e0e679df0c18 - m
-// 68c36b415baf40396519976c - p

@@ -71,7 +71,7 @@ export const playerAttack = async (
     }
     return response.data;
   } catch (error) {
-    console.log("Failed to fetch battle history");
+    console.log("Failed to attack monster");
     return null;
   }
 };
@@ -90,7 +90,27 @@ export const monsterAttack = async (
     }
     return response.data;
   } catch (error) {
-    console.log("Failed to fetch battle history");
+    console.log("Failed to attack player");
+    return null;
+  }
+};
+
+export const healEntity = async (
+  gameId: string,
+  entity: "player" | "monster",
+  heal: number
+): Promise<ApiResponse<{ game: Game }> | null> => {
+  try {
+    const response = await apiClient.post(`${BASE_PATH.game}/${gameId}/heal`, {
+      entity,
+      heal,
+    });
+    if (response.status !== 200) {
+      return null;
+    }
+    return response.data;
+  } catch (error) {
+    console.log("Failed to heal");
     return null;
   }
 };

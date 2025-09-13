@@ -8,6 +8,6 @@ export const BASE_PATH = {
 } as const;
 
 export const MAX_ATTACK_DAMAGE = 10;
-export const MAX_ATTACK_BLAST = 25;
-export const HEAL = 10;
+export const MAX_ATTACK_BLAST = 30;
+export const MAX_HEAL = 20;
 export const HEAL_COUNT = 3;

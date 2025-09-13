@@ -15,6 +15,7 @@ const StartStep = () => {
     currentGame,
     isPlayerAttacking,
     gameOver,
+    heal,
     playerAttackMonster,
   } = useHome();
   const { user } = useAuth();
@@ -73,7 +74,7 @@ const StartStep = () => {
           <h3 className="text-xl font-medium">Action Buttons</h3>
           <div className="flex gap-4 justify-between items-center max-w-2xl  mx-auto">
             <Button
-              onClick={playerAttackMonster}
+              onClick={() => playerAttackMonster("normal")}
               disabled={isPlayerAttacking}
               className={cn(
                 "flex-1 text-lg rounded-lg py-6 bg-green-700 hover:bg-green-800 cursor-pointer",
@@ -82,10 +83,19 @@ const StartStep = () => {
             >
               ATTACK
             </Button>
-            <Button className="flex-1 text-lg rounded-lg py-6 bg-orange-500 hover:bg-orange-600 cursor-pointer">
+            <Button
+              onClick={() => playerAttackMonster("blast")}
+              className="flex-1 text-lg rounded-lg py-6 bg-orange-500 hover:bg-orange-600 cursor-pointer"
+            >
               BLAST
             </Button>
-            <Button className="flex-1 text-lg rounded-lg py-6 bg-blue-500 hover:bg-blue-600 cursor-pointer">
+            <Button
+              onClick={async () => {
+                await heal("player");
+                await heal("monster");
+              }}
+              className="flex-1 text-lg rounded-lg py-6 bg-blue-500 hover:bg-blue-600 cursor-pointer"
+            >
               HEAL
             </Button>
             <Button className="flex-1 text-lg rounded-lg py-6 bg-slate-700 hover:bg-slate-800 cursor-pointer">

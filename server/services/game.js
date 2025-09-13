@@ -128,6 +128,27 @@ class GameService {
     }
   }
 
+  async healEntity(gameId, payload) {
+    if (!gameId) {
+      throw new APIError("Bad Request, Please provide game id.", 400);
+    }
+
+    try {
+      const game = await Game.findById(gameId)
+        .populate("player", "fullName")
+        .populate("monster", "name");
+      if (!game) {
+        throw new APIError("Game not found!", 404);
+      }
+
+      await game.heal(payload?.entity ?? "player", payload?.heal ?? 1);
+
+      return game;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
   async getGames() {
     try {
       return await Game.find({}).populate("player").populate("monster");

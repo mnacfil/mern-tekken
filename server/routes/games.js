@@ -8,5 +8,6 @@ router.get("/:id/battle-history", GameController.getPlayerGamesHistory);
 router.post("/start", GameController.startNewGame);
 router.post("/:id/monster-attack", GameController.monsterAttack);
 router.post("/:id/player-attack", GameController.playerAttack);
+router.post("/:id/heal", GameController.healEntity);
 
 export default router;

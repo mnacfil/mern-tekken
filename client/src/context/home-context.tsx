@@ -9,12 +9,14 @@ import { useAuth } from "./auth-context";
 import { useNavigate } from "react-router";
 import {
   getMonster,
+  healEntity,
   monsterAttack,
   playerAttack,
   startGame,
 } from "@/services/games";
 import type { Game, Monster } from "@/lib/types";
-import { getRandomDamge } from "@/lib/utils";
+import { getBlastDamage, getRandomValue } from "@/lib/utils";
+import { MAX_ATTACK_DAMAGE, MAX_HEAL } from "@/lib/config";
 
 type HomeState = {
   currentStep: "call-to-action" | "ready" | "start";
@@ -30,10 +32,11 @@ type HomeContextValue = HomeState & {
   onLogout: () => void;
   startPlaying: () => Promise<void>;
   startTheGame: () => Promise<void>;
-  playerAttackMonster: () => Promise<void>;
-  monsterAttackPlayer: () => Promise<void>;
+  playerAttackMonster: (type: "normal" | "blast") => Promise<void>;
+  monsterAttackPlayer: (type: "normal" | "blast") => Promise<void>;
   playAgain: () => Promise<void>;
   quitGame: () => void;
+  heal: (entity: "player" | "monster") => Promise<void>;
 };
 
 const HOME_ACTIONS = {
@@ -46,6 +49,7 @@ const HOME_ACTIONS = {
   GAME_OVER: "GAME_OVER",
   PlAY_AGAIN: "PLAY_AGAIN",
   QUIT_GAME: "QUIT_GAME",
+  HEAL: "HEAL",
 } as const;
 
 type HomeActions =
@@ -77,6 +81,10 @@ type HomeActions =
     }
   | {
       type: typeof HOME_ACTIONS.QUIT_GAME;
+    }
+  | {
+      type: typeof HOME_ACTIONS.HEAL;
+      payload: Game;
     };
 
 const initialState: HomeState = {
@@ -143,6 +151,11 @@ const homeReducer = (state: HomeState, action: HomeActions): HomeState => {
         ...state,
         ...initialState,
         currentStep: "call-to-action",
+      };
+    case HOME_ACTIONS.HEAL:
+      return {
+        ...state,
+        currentGame: action.payload,
       };
     default:
       return state;
@@ -211,13 +224,15 @@ const HomeProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const playerAttackMonster = async () => {
-    const randomDamge = getRandomDamge();
+  const playerAttackMonster = async (type: "normal" | "blast") => {
+    let damage = 1;
+    if (type === "normal") {
+      damage = getRandomValue(MAX_ATTACK_DAMAGE);
+    } else {
+      damage = getBlastDamage();
+    }
     try {
-      const response = await playerAttack(
-        state.currentGame?.id ?? "",
-        randomDamge
-      );
+      const response = await playerAttack(state.currentGame?.id ?? "", damage);
       if (!response) {
         throw new Error("Failed to attack monster");
       }
@@ -227,24 +242,47 @@ const HomeProvider = ({ children }: { children: ReactNode }) => {
         payload: response.data.game,
       });
 
-      await monsterAttackPlayer();
+      await monsterAttackPlayer(type);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const monsterAttackPlayer = async () => {
-    const randomDamge = getRandomDamge();
+  const monsterAttackPlayer = async (type: "normal" | "blast") => {
+    let damage = 1;
+    if (type === "normal") {
+      damage = getRandomValue(MAX_ATTACK_DAMAGE);
+    } else {
+      damage = getBlastDamage();
+    }
     try {
-      const response = await monsterAttack(
-        state.currentGame?.id ?? "",
-        randomDamge
-      );
+      const response = await monsterAttack(state.currentGame?.id ?? "", damage);
       if (!response) {
         throw new Error("Failed to attack player");
       }
       dispatch({
         type: HOME_ACTIONS.MONSTER_ATTACK,
+        payload: response.data.game,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const heal = async (entity: "player" | "monster") => {
+    const healValue = getRandomValue(MAX_HEAL);
+
+    try {
+      const response = await healEntity(
+        state.currentGame?.id ?? "",
+        entity,
+        healValue
+      );
+      if (!response) {
+        throw new Error("Failed to heal");
+      }
+      dispatch({
+        type: HOME_ACTIONS.HEAL,
         payload: response.data.game,
       });
     } catch (error) {
@@ -295,6 +333,7 @@ const HomeProvider = ({ children }: { children: ReactNode }) => {
     monsterAttackPlayer,
     playAgain,
     quitGame,
+    heal,
   };
 
   return (

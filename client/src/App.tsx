@@ -7,6 +7,7 @@ import HomePage from "./pages/home/Home";
 import { HomeProvider } from "./context/home-context";
 import { AuthProvider } from "./context/auth-context";
 import { Toaster } from "./components/ui/sonner";
+import BattleHistoryPage from "./pages/BattleHistoryPage";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           }
         >
           <Route index element={<HomePage />} />
+          <Route path="battle-history" element={<BattleHistoryPage />} />
           <Route element={<AuthLayout />}>
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />

@@ -5,6 +5,7 @@ import { APIError } from "../middleware/errorHandler.js";
 
 class GameService {
   async startNewGame(payload) {
+    console.log(payload);
     const { playerId, monsterId, duration = 60 } = payload ?? {};
     if (!playerId || !monsterId) {
       throw new APIError("Bad Request, Player or Monster is missing.", 400);

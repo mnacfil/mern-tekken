@@ -1,5 +1,57 @@
 import type { login, register } from "@/services/auth";
 
+export interface ApiResponse<T> {
+  status: "success" | "error";
+  data: T;
+}
+
+export interface Game {
+  gameData: GameData;
+  _id: string;
+  player: Player;
+  monster: Monster;
+  status: "in-progress" | "completed" | "pending";
+  winner: string | null;
+  duration: number;
+  moves: Move[];
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  durationInMinutes: number;
+  id: string;
+}
+
+export interface GameData {
+  playerHealth: number;
+  monsterHealth: number;
+}
+
+export interface Player {
+  _id: string;
+  fullName: string;
+  email: string;
+  avatar: string | null;
+  id: string;
+}
+
+export interface Monster {
+  _id: string;
+  name: string;
+  avatar: string | null;
+  id: string;
+  health: number;
+  attack: number;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+export interface Move {
+  entity: "player" | "monster";
+  action: string;
+  damage?: number;
+}
+
 export type RegisterPayload = {
   fullName: string;
   email: string;

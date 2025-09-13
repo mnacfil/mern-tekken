@@ -4,7 +4,7 @@ import express from "express";
 const router = express.Router();
 
 router.get("/", GameController.getGames);
-router.get("/:id/history", GameController.getPlayerGamesHistory);
+router.get("/:id/battle-history", GameController.getPlayerGamesHistory);
 router.post("/start", GameController.startNewGame);
 router.post("/:id/monster-attack", GameController.monsterAttack);
 router.post("/:id/player-attack", GameController.playerAttack);

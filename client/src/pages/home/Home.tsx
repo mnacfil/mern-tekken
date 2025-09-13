@@ -8,7 +8,7 @@ const HomePage = () => {
   const { currentStep } = useHome();
 
   return (
-    <div className="h-full flex justify-center items-center pb-52">
+    <div className="h-full flex flex-col justify-center items-center pb-52">
       {currentStep === "call-to-action" && <AuthCTAStep />}
       {currentStep === "ready" && <ReadyStep />}
       {currentStep === "start" && <StartStep />}

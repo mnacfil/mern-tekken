@@ -3,9 +3,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { useState } from "react";
 import GameOverDialog from "./game-over-dialog";
+import { useHome } from "@/context/home-context";
+import { useAuth } from "@/context/auth-context";
 
 const StartStep = () => {
   const [open, setOpen] = useState(false);
+  const { monster, currentGame } = useHome();
+  const { user } = useAuth();
   return (
     <>
       <div className="w-full space-y-6 text-slate-900">
@@ -18,7 +22,9 @@ const StartStep = () => {
         <div className="flex gap-6 text-center">
           <Card className="border-slate-50 flex-1">
             <CardHeader>
-              <CardTitle className="text-xl">Player Name</CardTitle>
+              <CardTitle className="text-xl">
+                {user?.fullName ?? "Player Name"}
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="rounded-full bg-green-500 h-8 w-full flex items-center justify-center gap-1 font-medium text-white">
@@ -32,7 +38,9 @@ const StartStep = () => {
           </div>
           <Card className="border-slate-50 flex-1">
             <CardHeader>
-              <CardTitle className="text-xl">Monster</CardTitle>
+              <CardTitle className="text-xl">
+                {monster?.name ?? "Monster"}
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="rounded-full bg-red-500 h-8 w-full flex items-center justify-center gap-1 font-medium text-white">

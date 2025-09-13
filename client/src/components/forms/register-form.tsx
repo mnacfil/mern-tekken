@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router";
+import { useAuth } from "@/context/auth-context";
 
 const registerFormSchema = z.object({
   fullName: z
@@ -30,6 +31,7 @@ const registerFormSchema = z.object({
 });
 
 const RegisterForm = () => {
+  const { loading, registerPlayer } = useAuth();
   const form = useForm<z.infer<typeof registerFormSchema>>({
     resolver: zodResolver(registerFormSchema),
     defaultValues: {
@@ -41,8 +43,17 @@ const RegisterForm = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof registerFormSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof registerFormSchema>) {
+    try {
+      await registerPlayer({
+        fullName: values.fullName,
+        email: values.email,
+        password: values.password,
+        confirmPassword: values.confirmPassword,
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
@@ -108,8 +119,12 @@ const RegisterForm = () => {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full py-7 rounded-xl text-lg">
-          Create Account
+        <Button
+          type="submit"
+          disabled={loading}
+          className="w-full py-7 rounded-xl text-lg"
+        >
+          {loading ? "Creating..." : "Create Account"}
         </Button>
         <p className="text-center text-secondary-foreground">
           Already have an account?{" "}

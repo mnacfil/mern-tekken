@@ -6,22 +6,24 @@ import Register from "./pages/auth/Register";
 import HomePage from "./pages/home/Home";
 import { HomeProvider } from "./context/home-context";
 import { AuthProvider } from "./context/auth-context";
+import { Toaster } from "./components/ui/sonner";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<MainLayout />}>
-          <Route
-            index
-            element={
-              <AuthProvider>
-                <HomeProvider>
-                  <HomePage />
-                </HomeProvider>
-              </AuthProvider>
-            }
-          />
+        <Route
+          path="/"
+          element={
+            <AuthProvider>
+              <HomeProvider>
+                <MainLayout />
+                <Toaster richColors position="bottom-right" />
+              </HomeProvider>
+            </AuthProvider>
+          }
+        >
+          <Route index element={<HomePage />} />
           <Route element={<AuthLayout />}>
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />

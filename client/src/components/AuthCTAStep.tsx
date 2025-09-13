@@ -4,8 +4,10 @@ import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Separator } from "./ui/separator";
 import AppLogo from "./app-logo";
+import { useHome } from "@/context/home-context";
 
 const AuthCTAStep = () => {
+  const { next } = useHome();
   return (
     <Card className="border-slate-100  w-[500px] rounded-2xl">
       <CardContent className="text-center flex flex-col items-center">
@@ -16,7 +18,10 @@ const AuthCTAStep = () => {
             Join the epic monster fighting arena and test your combat skills!
           </p>
         </div>
-        <Button className="w-full text-lg py-7 rounded-2xl cursor-pointer">
+        <Button
+          onClick={() => next("ready")}
+          className="w-full text-lg py-7 rounded-2xl cursor-pointer"
+        >
           Start Playing Now
         </Button>
 

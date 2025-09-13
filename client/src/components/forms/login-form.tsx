@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router";
+import { useAuth } from "@/context/auth-context";
+import { cn } from "@/lib/utils";
 
 const loginFormSchema = z.object({
   email: z.email({ message: "Please provide Email" }),
@@ -20,7 +22,8 @@ const loginFormSchema = z.object({
     .min(6, { message: "Password must be atleast 6 characters long" }),
 });
 
-const RegisterForm = () => {
+const LoginForm = () => {
+  const { loginPlayer, loading } = useAuth();
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
@@ -29,8 +32,12 @@ const RegisterForm = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof loginFormSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof loginFormSchema>) {
+    try {
+      await loginPlayer({ email: values.email, password: values.password });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
@@ -67,8 +74,15 @@ const RegisterForm = () => {
           )}
         />
 
-        <Button type="submit" className="w-full py-7 rounded-xl text-lg">
-          Sign In
+        <Button
+          type="submit"
+          disabled={loading}
+          className={cn(
+            "w-full py-7 rounded-xl text-lg",
+            loading ? "cursor-not-allowed opacity-80" : "cursor-pointer"
+          )}
+        >
+          {loading ? "Signing..." : " Sign In"}
         </Button>
         <p className="text-center text-secondary-foreground">
           Don't have an account?{" "}
@@ -81,4 +95,4 @@ const RegisterForm = () => {
   );
 };
 
-export default RegisterForm;
+export default LoginForm;

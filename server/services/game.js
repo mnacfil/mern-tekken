@@ -180,7 +180,8 @@ class GameService {
     try {
       const gamesHistory = await Game.find({ player: playerId })
         .populate("player")
-        .populate("monster");
+        .populate("monster")
+        .sort({ createdAt: -1 });
 
       return gamesHistory;
     } catch (error) {

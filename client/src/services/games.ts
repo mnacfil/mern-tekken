@@ -1,9 +1,10 @@
 import { BASE_PATH } from "@/lib/config";
 import apiClient from "./api";
-import type { ApiResponse, Game, GameV2, Monster } from "@/lib/types";
+import type { ApiResponse, Game, Monster } from "@/lib/types";
 
-export const getBattleHistory = async (playerId: string) => {
-  console.log(playerId);
+export const getBattleHistory = async (
+  playerId: string
+): Promise<ApiResponse<{ gamesHistory: Game[] }> | null> => {
   try {
     const response = await apiClient(
       `${BASE_PATH.game}/${playerId}/battle-history`

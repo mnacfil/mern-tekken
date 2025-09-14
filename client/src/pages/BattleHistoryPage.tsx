@@ -20,7 +20,6 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router";
 
 const BattleHistoryPage = () => {
-  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [battlesHistory, setBattlesHistory] = useState<Game[]>([]);
 
@@ -28,7 +27,7 @@ const BattleHistoryPage = () => {
     const fetchBattleHistory = async () => {
       setLoading(true);
       try {
-        const hitory = await getBattleHistory(user?.id ?? "");
+        const hitory = await getBattleHistory();
         setBattlesHistory(hitory?.data.gamesHistory ?? []);
       } catch (error) {
         console.log(error);

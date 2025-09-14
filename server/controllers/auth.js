@@ -23,7 +23,7 @@ const createSendToken = (player, statusCode, res, message = "Success") => {
 
   player.password = undefined;
 
-  res.cookie("access-token", token, cookieOptions);
+  res.cookie("jwt-token", token, cookieOptions);
 
   res.status(statusCode).json({
     status: "success",
@@ -115,7 +115,7 @@ const login = async (req, res, next) => {
 };
 
 const logout = (req, res) => {
-  res.cookie("access-token", "loggedout", {
+  res.cookie("jwt-token", "loggedout", {
     expires: new Date(Date.now() + 1 * 1000),
     httpOnly: true,
   });
@@ -127,12 +127,11 @@ const logout = (req, res) => {
 };
 
 const getCurrentUser = async (req, res, next) => {
-  if (!req.query.id) {
-    throw new APIError("Bad Request, No player id provided", 400);
+  if (!req.player.id) {
+    throw new APIError("Unauthorized Error", 401);
   }
-  console.log(req.query.id);
   try {
-    const player = await Player.findById(req.query.id).select("-password");
+    const player = await Player.findById(req.player.id).select("-password");
 
     res.status(200).json({
       status: "success",

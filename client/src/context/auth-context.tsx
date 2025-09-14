@@ -144,16 +144,15 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     dispatch({ type: AUTH_ACTIONS.LOAD });
     const fetchCurrentUser = async () => {
       try {
-        const response = await getCurrentUser({
-          id: "68c4edac592675441bce011b",
-        });
-
-        if (response) {
-          dispatch({
-            type: AUTH_ACTIONS.LOAD_SUCCESS,
-            payload: response.data?.player,
-          });
+        const response = await getCurrentUser();
+        if (!response) {
+          throw new Error("No Current user");
         }
+
+        dispatch({
+          type: AUTH_ACTIONS.LOAD_SUCCESS,
+          payload: response.data?.player,
+        });
       } catch (error) {
         dispatch({ type: AUTH_ACTIONS.LOAD_FAILED });
         console.log("Failed to fetch current user");

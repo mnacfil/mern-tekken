@@ -8,10 +8,6 @@ import type {
   RegisterPayload,
 } from "@/lib/types";
 
-type GetCurrentUserQuery = {
-  id: string;
-};
-
 const register = async (
   payload: RegisterPayload
 ): Promise<ApiResponse<{ player: Player }> | null> => {
@@ -48,13 +44,11 @@ const login = async (
   }
 };
 
-const getCurrentUser = async (
-  query: GetCurrentUserQuery
-): Promise<ApiResponse<{ player: Player }> | null> => {
+const getCurrentUser = async (): Promise<ApiResponse<{
+  player: Player;
+}> | null> => {
   try {
-    const response = await apiClient(
-      `${BASE_PATH.auth}/current-user?id=${query.id}`
-    );
+    const response = await apiClient(`${BASE_PATH.auth}/current-user`);
     if (response.status !== 200) {
       return null;
     }

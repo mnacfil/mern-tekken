@@ -76,7 +76,7 @@ class GameController {
   async getPlayerGamesHistory(req, res, next) {
     try {
       const gamesHistory = await GameService.getPlayerGamesHistory(
-        req.params.id
+        req.player.id
       );
       res.status(200).json({
         status: "success",

@@ -1,10 +1,15 @@
 import GameController from "../controllers/game.js";
+import { authMiddleware } from "../middleware/auth.js";
 import express from "express";
 
 const router = express.Router();
 
 router.get("/", GameController.getGames);
-router.get("/:id/battle-history", GameController.getPlayerGamesHistory);
+router.get(
+  "/current-user/battle-history",
+  authMiddleware,
+  GameController.getPlayerGamesHistory
+);
 router.post("/start", GameController.startNewGame);
 router.post("/:id/monster-attack", GameController.monsterAttack);
 router.post("/:id/player-attack", GameController.playerAttack);

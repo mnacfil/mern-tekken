@@ -79,6 +79,26 @@ cd server
 npm install
 ```
 
+Run the seed script to create monsters (This is important because the app get randome monster from database)
+
+normal seed
+
+```bash
+npm run seed
+```
+
+force to clean existing monsters data from database
+
+```bash
+npm run seed:force
+```
+
+clear existing monsters data from database
+
+```bash
+npm run seed:force
+```
+
 Create a `.env` file in the server directory with the following variables:
 
 ```env

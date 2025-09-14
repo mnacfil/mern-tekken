@@ -5,7 +5,10 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --env-file=.env server.js"
+    "dev": "nodemon --env-file=.env server.js",
+    "seed": "node --env-file=.env  ./db/seed.js",
+    "seed:force": "node --env-file=.env  ./db/seed.js --force",
+    "seed:clear": "node --env-file=.env  ./db/seed.js --clear"
   },
   "keywords": [],
   "author": "",

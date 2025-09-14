@@ -119,6 +119,47 @@ npm run dev
 
 The client will be running on `http://localhost:5173`
 
+## 📸 Screenshots
+
+### Authentication Pages
+
+#### Login Page
+
+![Login Page](./screenshots/login-page.png)
+_User login interface with email and password fields_
+
+#### Register Page
+
+![Register Page](./screenshots/register-page.png)
+_User registration form with validation_
+
+### Main Application
+
+#### Home Page
+
+![Home Page](./screenshots/home-page.png)
+_home page after successful authentication_
+
+#### Home Page Ready
+
+![Home Page Ready](./screenshots/home-page-ready.png)
+_home page after clicking start playing game_
+
+#### Home Page Start
+
+![Home Page Start](./screenshots/home-page-actual-game.png)
+_home page after clicking start button_
+
+#### Home Page Player win
+
+![Home Page Player win](./screenshots/player-win.png)
+_home page, Player win the game_
+
+#### Home Page Abandoned the game
+
+![Home Page Player win](./screenshots/abandoned.png)
+_home page, Player abandonded the game_
+
 ## 🌐 API Endpoints
 
 The server endpoints

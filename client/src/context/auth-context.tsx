@@ -1,10 +1,4 @@
-import type {
-  AuthUser,
-  LoginPayload,
-  LoginResponse,
-  RegisterPayload,
-  RegisterResponse,
-} from "@/lib/types";
+import type { LoginPayload, Player, RegisterPayload } from "@/lib/types";
 import { getCurrentUser, login, logout, register } from "@/services/auth";
 import {
   createContext,
@@ -15,13 +9,12 @@ import {
 } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
-import { useHome } from "./home-context";
 
 type AuthState = {
   isSignedIn: boolean;
   isAuthenticated: boolean;
   loading: boolean;
-  user: AuthUser | null;
+  user: Player | null;
 };
 
 type AuthContextValue = AuthState & {
@@ -46,13 +39,13 @@ const AUTH_ACTIONS = {
 
 type AuthAction =
   | { type: typeof AUTH_ACTIONS.LOAD }
-  | { type: typeof AUTH_ACTIONS.LOAD_SUCCESS; payload: AuthUser }
+  | { type: typeof AUTH_ACTIONS.LOAD_SUCCESS; payload: Player }
   | { type: typeof AUTH_ACTIONS.LOAD_FAILED }
   | { type: typeof AUTH_ACTIONS.LOGIN }
-  | { type: typeof AUTH_ACTIONS.LOGIN_SUCCESS; payload: LoginResponse }
+  | { type: typeof AUTH_ACTIONS.LOGIN_SUCCESS; payload: Player }
   | { type: typeof AUTH_ACTIONS.LOGIN_FAILED }
   | { type: typeof AUTH_ACTIONS.REGISTER }
-  | { type: typeof AUTH_ACTIONS.REGISTER_SUCCESS; payload: RegisterResponse }
+  | { type: typeof AUTH_ACTIONS.REGISTER_SUCCESS; payload: Player }
   | { type: typeof AUTH_ACTIONS.REGISTER_FAILED }
   | { type: typeof AUTH_ACTIONS.LOGOUT_SUCCESS }
   | { type: typeof AUTH_ACTIONS.LOGOUT_FAILED };
@@ -99,7 +92,7 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
         ...state,
         loading: false,
         isAuthenticated: true,
-        user: action.payload?.user ?? null,
+        user: action.payload,
       };
     case AUTH_ACTIONS.LOGIN_FAILED:
       return {
@@ -118,7 +111,7 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
         ...state,
         loading: false,
         isAuthenticated: true,
-        user: action.payload?.user ?? null,
+        user: action.payload,
       };
     case AUTH_ACTIONS.REGISTER_FAILED:
       return {
@@ -151,11 +144,15 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     dispatch({ type: AUTH_ACTIONS.LOAD });
     const fetchCurrentUser = async () => {
       try {
-        const currentUser = await getCurrentUser({
+        const response = await getCurrentUser({
           id: "68c4edac592675441bce011b",
         });
-        if (currentUser) {
-          dispatch({ type: AUTH_ACTIONS.LOAD_SUCCESS, payload: currentUser });
+
+        if (response) {
+          dispatch({
+            type: AUTH_ACTIONS.LOAD_SUCCESS,
+            payload: response.data?.player,
+          });
         }
       } catch (error) {
         dispatch({ type: AUTH_ACTIONS.LOAD_FAILED });
@@ -169,10 +166,15 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     dispatch({ type: AUTH_ACTIONS.LOGIN });
     try {
       const response = await login(params);
-      if (response) {
-        dispatch({ type: AUTH_ACTIONS.LOGIN_SUCCESS, payload: response });
-        navigate("/");
+      if (!response) {
+        throw new Error("Failed to login player");
       }
+
+      dispatch({
+        type: AUTH_ACTIONS.LOGIN_SUCCESS,
+        payload: response.data?.player,
+      });
+      navigate("/");
     } catch (error) {
       dispatch({ type: AUTH_ACTIONS.LOGIN_FAILED });
       toast.error("Failed to login");
@@ -185,12 +187,14 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const response = await register(params);
       if (!response) {
-        throw new Error("Bad Request");
+        throw new Error("Failed to register player");
       }
-      if (response) {
-        dispatch({ type: AUTH_ACTIONS.REGISTER_SUCCESS, payload: response });
-        navigate("/");
-      }
+
+      dispatch({
+        type: AUTH_ACTIONS.REGISTER_SUCCESS,
+        payload: response.data?.player,
+      });
+      navigate("/");
     } catch (error: any) {
       dispatch({ type: AUTH_ACTIONS.REGISTER_FAILED });
       toast.error("Faild to register");

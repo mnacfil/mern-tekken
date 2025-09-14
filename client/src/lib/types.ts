@@ -1,8 +1,8 @@
-import type { login, register } from "@/services/auth";
-
 export interface ApiResponse<T> {
   status: "success" | "error";
   data: T;
+  message?: string;
+  token?: string;
 }
 
 export interface Game {
@@ -48,6 +48,9 @@ export interface Player {
   email?: string;
   avatar?: string | null;
   id: string;
+  createdAt?: string;
+  updatedAt?: string;
+  __v?: number;
 }
 
 export interface Monster {
@@ -85,6 +88,3 @@ export type AuthUser = {
   email: string;
   avatar?: string;
 };
-
-export type LoginResponse = Awaited<ReturnType<typeof login>>;
-export type RegisterResponse = Awaited<ReturnType<typeof register>>;

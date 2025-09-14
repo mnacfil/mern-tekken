@@ -25,7 +25,10 @@ const MainLayout = () => {
                 <>
                   <div className="flex items-center gap-2">
                     <Avatar className="size-10">
-                      <AvatarImage src={user?.avatar} alt="Avatar image" />
+                      <AvatarImage
+                        src={user?.avatar ?? ""}
+                        alt="Avatar image"
+                      />
                       <AvatarFallback>
                         {user?.fullName?.at(0) ?? "M"}
                       </AvatarFallback>

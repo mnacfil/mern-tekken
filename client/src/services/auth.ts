@@ -1,12 +1,20 @@
 import { BASE_PATH } from "@/lib/config";
 import apiClient from "./api";
-import type { AuthUser, LoginPayload, RegisterPayload } from "@/lib/types";
+import type {
+  ApiResponse,
+  AuthUser,
+  LoginPayload,
+  Player,
+  RegisterPayload,
+} from "@/lib/types";
 
 type GetCurrentUserQuery = {
   id: string;
 };
 
-const register = async (payload: RegisterPayload) => {
+const register = async (
+  payload: RegisterPayload
+): Promise<ApiResponse<{ player: Player }> | null> => {
   try {
     const response = await apiClient.post(
       `${BASE_PATH.auth}/register`,
@@ -17,44 +25,23 @@ const register = async (payload: RegisterPayload) => {
       return null;
     }
 
-    const { token, message, data } = response.data;
-
-    return {
-      token,
-      message,
-      user: {
-        id: data.id,
-        fullName: data.fullName,
-        email: data.email,
-        avatar: data.avatar,
-      },
-    };
+    return response.data;
   } catch (error) {
     console.error("Registration failed:", error);
     return null;
   }
 };
 
-const login = async (payload: LoginPayload) => {
+const login = async (
+  payload: LoginPayload
+): Promise<ApiResponse<{ player: Player }> | null> => {
   try {
     const response = await apiClient.post(`${BASE_PATH.auth}/login`, payload);
 
     if (response.status !== 200) {
       return null;
     }
-
-    const { token, message, data } = response.data;
-
-    return {
-      token,
-      message,
-      user: {
-        id: data.id,
-        fullName: data.fullName,
-        email: data.email,
-        avatar: data.avatar,
-      },
-    };
+    return response.data;
   } catch (error) {
     console.error("Login failed:", error);
     return null;
@@ -63,7 +50,7 @@ const login = async (payload: LoginPayload) => {
 
 const getCurrentUser = async (
   query: GetCurrentUserQuery
-): Promise<AuthUser | null> => {
+): Promise<ApiResponse<{ player: Player }> | null> => {
   try {
     const response = await apiClient(
       `${BASE_PATH.auth}/current-user?id=${query.id}`
@@ -71,13 +58,7 @@ const getCurrentUser = async (
     if (response.status !== 200) {
       return null;
     }
-    const { id, fullName, email, avatar } = response.data?.data?.player;
-    return {
-      id,
-      fullName,
-      email,
-      avatar,
-    };
+    return response.data;
   } catch (error) {
     console.error("Failed to get current user:", error);
     return null;

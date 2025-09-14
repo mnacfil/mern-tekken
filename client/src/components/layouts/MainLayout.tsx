@@ -61,7 +61,7 @@ const MainLayout = () => {
           </nav>
         </div>
       </header>
-      <main className="max-w-5xl mx-auto w-full h-full p-10">
+      <main className="max-w-7xl mx-auto w-full h-full p-10">
         <Outlet />
       </main>
     </div>

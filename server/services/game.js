@@ -49,7 +49,7 @@ class GameService {
     }
   }
 
-  async playerAttack(gameId, damage = 0) {
+  async playerAttack(gameId, { attackType, damage }) {
     if (!gameId) {
       throw new APIError("Bad Request, Please provide game id.", 400);
     }
@@ -69,7 +69,7 @@ class GameService {
       const playerName = game.player.name;
       const monsterName = game.monster.name;
 
-      await game.addMove("player", "attack", damage);
+      await game.addMove("player", attackType, damage);
 
       console.log(
         `${playerName} attacked! ${monsterName} monster health:`,
@@ -87,7 +87,7 @@ class GameService {
     }
   }
 
-  async monsterAttack(gameId, damage = 0) {
+  async monsterAttack(gameId, { attackType, damage }) {
     if (!gameId) {
       throw new APIError("Bad Request, Please provide game id.", 400);
     }
@@ -107,12 +107,13 @@ class GameService {
       const playerName = game.player.fullName;
       const monsterName = game.monster.name;
 
-      await game.addMove("monster", "attack", damage);
+      await game.addMove("monster", attackType, damage);
 
       console.log(
         `${monsterName} attacked! ${playerName} player health:`,
         game.gameData.playerHealth
       );
+
       if (game.gameData.playerHealth <= 0) {
         await game.endGame("monster");
         console.log("Monster win");

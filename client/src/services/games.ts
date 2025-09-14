@@ -60,12 +60,13 @@ export const startGame = async (
 
 export const playerAttack = async (
   gameId: string,
+  attackType: string,
   damage: number
 ): Promise<ApiResponse<{ game: Game }> | null> => {
   try {
     const response = await apiClient.post(
       `${BASE_PATH.game}/${gameId}/player-attack`,
-      { damage }
+      { attackType, damage }
     );
     if (response.status !== 200) {
       return null;
@@ -79,12 +80,13 @@ export const playerAttack = async (
 
 export const monsterAttack = async (
   gameId: string,
+  attackType: string,
   damage: number
 ): Promise<ApiResponse<{ game: Game }> | null> => {
   try {
     const response = await apiClient.post(
       `${BASE_PATH.game}/${gameId}/monster-attack`,
-      { damage }
+      { attackType, damage }
     );
     if (response.status !== 200) {
       return null;

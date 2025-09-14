@@ -241,13 +241,21 @@ const HomeProvider = ({ children }: { children: ReactNode }) => {
 
   const playerAttackMonster = async (type: "normal" | "blast") => {
     let damage = 1;
-    if (type === "normal") {
+    let attack = "attack";
+    const isNormalAttack = type === "normal";
+    if (isNormalAttack) {
+      attack = "Attack";
       damage = getRandomValue(MAX_ATTACK_DAMAGE);
     } else {
+      attack = "Power Blast";
       damage = getBlastDamage();
     }
     try {
-      const response = await playerAttack(state.currentGame?.id ?? "", damage);
+      const response = await playerAttack(
+        state.currentGame?.id ?? "",
+        attack,
+        damage
+      );
       if (!response) {
         throw new Error("Failed to attack monster");
       }
@@ -265,13 +273,21 @@ const HomeProvider = ({ children }: { children: ReactNode }) => {
 
   const monsterAttackPlayer = async (type: "normal" | "blast") => {
     let damage = 1;
-    if (type === "normal") {
+    let attack = "attack";
+    const isNormalAttack = type === "normal";
+    if (isNormalAttack) {
+      attack = "Attack";
       damage = getRandomValue(MAX_ATTACK_DAMAGE);
     } else {
+      attack = "Power Blast";
       damage = getBlastDamage();
     }
     try {
-      const response = await monsterAttack(state.currentGame?.id ?? "", damage);
+      const response = await monsterAttack(
+        state.currentGame?.id ?? "",
+        attack,
+        damage
+      );
       if (!response) {
         throw new Error("Failed to attack player");
       }

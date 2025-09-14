@@ -1,8 +1,8 @@
+import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -26,11 +26,22 @@ const GameOverDialog = ({
 }: GameOverDialogProps) => {
   const { playAgain, quitGame } = useHome();
 
+  const isPlayerWin = winner === "player";
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange} {...props}>
       <DialogContent className="text-center w-[400px]">
         <DialogHeader className="flex justify-center  items-center">
-          <DialogTitle className="text-3xl font-bold text-center">
+          <DialogTitle
+            className={cn(
+              "text-3xl font-bold text-center",
+              isAbandoned
+                ? "text-slate-400"
+                : isPlayerWin
+                ? "text-green-400"
+                : "text-red-400"
+            )}
+          >
             {isAbandoned
               ? "You Abandoned the Game"
               : winner === "player"

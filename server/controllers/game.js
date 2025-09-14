@@ -15,10 +15,7 @@ class GameController {
 
   async playerAttack(req, res, next) {
     try {
-      const game = await GameService.playerAttack(
-        req.params.id,
-        req.body.damage
-      );
+      const game = await GameService.playerAttack(req.params.id, req.body);
       res.status(200).json({
         status: "success",
         data: { game },
@@ -30,10 +27,7 @@ class GameController {
 
   async monsterAttack(req, res, next) {
     try {
-      const game = await GameService.monsterAttack(
-        req.params.id,
-        req.body.damage
-      );
+      const game = await GameService.monsterAttack(req.params.id, req.body);
       res.status(200).json({
         status: "success",
         data: { game },

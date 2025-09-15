@@ -2,7 +2,6 @@ import { BASE_PATH } from "@/lib/config";
 import apiClient from "./api";
 import type {
   ApiResponse,
-  AuthUser,
   LoginPayload,
   Player,
   RegisterPayload,

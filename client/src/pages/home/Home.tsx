@@ -1,7 +1,6 @@
 import AuthCTAStep from "@/components/AuthCTAStep";
 import ReadyStep from "@/components/ReadyStep";
 import StartStep from "@/components/StartStep";
-import { useAuth } from "@/context/auth-context";
 import { useHome } from "@/context/home-context";
 
 const HomePage = () => {

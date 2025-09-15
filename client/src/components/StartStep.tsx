@@ -14,7 +14,6 @@ const StartStep = () => {
     monster,
     currentGame,
     isPlayerAttacking,
-    gameOver,
     heal,
     playerAttackMonster,
     abandonedTheGame,
@@ -159,7 +158,7 @@ const StartStep = () => {
       </div>
 
       <GameOverDialog
-        open={status === "completed" || status === "abandoned"}
+        open={status === "completed" || status === "abandoned" || open}
         onOpenChange={setOpen}
         winner={winner ?? "player"}
         isAbandoned={status === "abandoned"}

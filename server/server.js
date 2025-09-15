@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import dotenv from "dotenv";
 import { DEFAULT_PORT } from "./util/config.js";
 import {
   authRoutes,
@@ -10,6 +11,8 @@ import {
 } from "./routes/index.js";
 import { connectAndStartServer } from "./db/connection.js";
 import { globalErrorHandler } from "./middleware/errorHandler.js";
+
+dotenv.config();
 
 const app = express();
 
@@ -41,8 +44,4 @@ app.use(globalErrorHandler);
 
 const PORT = process.env.PORT || DEFAULT_PORT;
 
-connectAndStartServer(() => {
-  app.listen(PORT, () => {
-    console.log(`Server is listening on port ${PORT}`);
-  });
-});
+connectAndStartServer(app, PORT);

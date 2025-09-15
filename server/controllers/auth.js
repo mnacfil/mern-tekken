@@ -13,12 +13,11 @@ const createSendToken = (player, statusCode, res, message = "Success") => {
 
   const cookieOptions = {
     expires: new Date(
-      Date.now() +
-        (process.env.JWT_COOKIE_EXPIRES_IN || 1) * 24 * 60 * 60 * 1000 // expires in 1 day
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000 // expires in 7 day
     ),
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "none",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   };
 
   player.password = undefined;

@@ -14,6 +14,8 @@ import { globalErrorHandler } from "./middleware/errorHandler.js";
 
 dotenv.config();
 
+console.log("ENV => ", process.env.NODE_ENV);
+
 const app = express();
 
 console.log("Client => ", process.env.CLIENT_URL);

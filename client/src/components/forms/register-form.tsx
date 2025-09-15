@@ -63,7 +63,7 @@ const RegisterForm = () => {
           name="fullName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Full Name</FormLabel>
               <FormControl>
                 <Input placeholder="Enter your full name" {...field} />
               </FormControl>

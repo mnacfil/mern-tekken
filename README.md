@@ -53,7 +53,15 @@ mern-tekken/
 └── README.md
 ```
 
-## 🛠️ Prerequisites
+## 🚀 Deployment
+
+This project is deployed and accessible online:
+
+- **Frontend (Vite + React):** [https://mern-tekken-frontend.vercel.app](https://mern-tekken-frontend.vercel.app)
+- **Backend (Node.js + Express):** [https://mern-tekken-backend.onrender.com](https://mern-tekken-backend.onrender.com)
+- **Database (MongoDB Atlas)** (Already in production)
+
+## 🛠️ How to run this app locally
 
 Before running this application, make sure you have the following installed:
 
@@ -264,7 +272,6 @@ The client page
 - Timer
 - Unit Test
 - Dockerized
-- Deploy in prod
 
 ## My conclusion
 
